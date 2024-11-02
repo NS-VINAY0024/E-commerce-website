@@ -127,14 +127,16 @@ const CategorySection = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h2 className="text-4xl font-bold text-gray-200 text-center">Shop by Category</h2>
+        <h2 className="text-4xl font-bold text-gray-200 text-center">
+          Shop by Category
+        </h2>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 justify-items-center">
         {categories.map((category, index) => (
           <div
             key={index}
-            className="category-item w-full bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg shadow-lg transition-transform duration-300 hover:scale-105"
+            className="category-item w-full bg-slate-50 rounded-lg shadow-lg transition-transform  duration-300 hover:scale-105 hover:bg-slate-200"
           >
             <a
               href={category.link}
@@ -147,7 +149,7 @@ const CategorySection = () => {
                 alt={category.name}
                 className="w-full h-auto max-w-[100px] mx-auto mb-2"
               />
-              <p className="text-lg font-bold text-gray-200">{category.name}</p>
+              <p className="text-lg font-bold text-black">{category.name}</p>
             </a>
           </div>
         ))}

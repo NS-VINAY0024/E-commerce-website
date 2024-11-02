@@ -40,7 +40,7 @@ const MainContent = () => {
   }, [nextSlide]);
 
   return (
-    <main className="w-full bg-gradient-to-r from-[#6a11cb] to-[#2575fc]">
+    <main className="w-full bg-gradient-to-r from-[#6a11cb] to-[#2575fc] min-h-screen p-0">
       <div className="grid grid-cols-1 grid-rows-[auto_auto_auto_1fr] text-center text-silver">
         {/* Marquee Section */}
         <div className="bg-yellow-300 h-4 flex items-center overflow-hidden md:h-8">

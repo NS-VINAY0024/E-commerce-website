@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-r from-[#6a11cb] to-[#2575fc] p-[10px] grid grid-cols-3 grid-rows-[0.5fr_0.1fr] items-center shadow-[0_-4px_10px_rgba(0,0,0,0.1)]">
+    <footer className="bg-gradient-to-r from-[#6a11cb] to-[#2575fc] p-[10px] grid grid-cols-3 grid-rows-[0.5fr_0.1fr] items-center shadow-[0_-4px_10px_rgba(0,0,0,0.1)] ">
       <div className="flex flex-col items-start">
         <img
           src={`${process.env.PUBLIC_URL}/image/agni logo.png`}
