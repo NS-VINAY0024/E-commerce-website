@@ -1,5 +1,5 @@
 import React from "react";
-import CategorySection from "../../Items_section/categories";
+import CategorySection from "./ProductComponents/categories";
 
 const Items = () => {
   return (
