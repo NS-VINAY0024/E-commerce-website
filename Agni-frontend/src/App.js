@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './components/layout/Header';
-import MainContent from './components/layout/MainContent';
-import Map from './components/layout/Header_contents/Map'
-import Items from './components/layout/Header_contents/Items';
-import Footer from './components/layout/Footer';
+import Header from './components/Header';
+import MainContent from './components/MainContent';
+import Map from './components/Map'
+import Items from './components/ItemsDisplay';
+import Footer from './components/Footer';
 import AuthPages from './components/auth/AuthPages';
 
 const App = () => {
