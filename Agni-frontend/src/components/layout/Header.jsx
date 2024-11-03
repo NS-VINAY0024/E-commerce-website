@@ -1,10 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Import Link
+
+const CartIcon = ({ className }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <path
+      d="M4 4h2l2.5 12h10l2.5-8H8"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle cx="10" cy="20" r="1" fill="currentColor" />
+    <circle cx="18" cy="20" r="1" fill="currentColor" />
+  </svg>
+);
 
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loginStatus, setLoginStatus] = useState("");
   const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
 
   useEffect(() => {
     setLoginStatus(userLoggedIn ? "Logged in" : "Login");
@@ -12,6 +32,10 @@ const Header = () => {
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   useEffect(() => {
@@ -31,101 +55,131 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="grid grid-cols-2 items-center bg-gradient-to-r from-[#6a11cb] to-[#2575fc] p-3 sm:p-4 md:p-5 shadow-[0_10px_10px_rgba(0,0,0,0.1)]">
-      <div className="left-section flex items-center">
-        <Link to="." className="mr-5">
-          <img
-            src={`${process.env.PUBLIC_URL}/image/agni logo.png`}
-            alt="Smart Shopping Logo"
-            className="max-w-[40px] sm:max-w-[50px] md:max-w-[60px]"
-          />
-        </Link>
-        <nav>
-          <ul className="flex list-none m-0 p-0">
-            <li className="mr-5">
-              <Link
-                to="/"
-                className="no-underline text-[#F3F4F6] text-[14px] sm:text-[18px] font-bold hover:text-[#2575fc]"
-              >
-                Home
-              </Link>
-            </li>
-            <li className="mr-5">
-              <Link
-                to="/items"
-                className="no-underline text-[#F3F4F6] text-[14px] sm:text-[18px] font-bold hover:text-[#2575fc]"
-              >
-                Items
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/map"
-                className="no-underline text-[#F3F4F6] text-[14px] sm:text-[18px] font-bold hover:text-[#2575fc]"
-              >
-                Map
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      </div>
-
-      {/* Rest of the header code remains the same */}
-      <div className="right-section flex justify-end items-center">
-        <div className="cart mr-5">
-          <Link to="/cart" title="Shopping Cart">
+    <>
+      <header className="grid grid-cols-2 items-center bg-gradient-to-r from-[#6a11cb] to-[#2575fc] p-3 sm:p-4 md:p-5 shadow-md">
+        <div className="left-section flex items-center">
+          <a href="/" className="mr-5">
             <img
-              src={`${process.env.PUBLIC_URL}/image/cart.png`}
-              alt="Cart"
-              className="w-[14px] sm:w-[30px]"
+              src="/image/agni logo.png"
+              alt="Smart Shopping Logo"
+              className="max-w-[40px] sm:max-w-[50px] md:max-w-[60px]"
             />
-          </Link>
+          </a>
+          <nav>
+            <ul className="flex list-none m-0 p-0">
+              <li className="mr-5">
+                <a
+                  href="/"
+                  className="no-underline text-[#F3F4F6] text-[14px] sm:text-[18px] font-bold hover:text-[#2575fc]"
+                >
+                  Home
+                </a>
+              </li>
+              <li className="mr-5">
+                <a
+                  href="/items"
+                  className="no-underline text-[#F3F4F6] text-[14px] sm:text-[18px] font-bold hover:text-[#2575fc]"
+                >
+                  Items
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/map"
+                  className="no-underline text-[#F3F4F6] text-[14px] sm:text-[18px] font-bold hover:text-[#2575fc]"
+                >
+                  Map
+                </a>
+              </li>
+            </ul>
+          </nav>
         </div>
 
-        <div
-          id="hamburgerMenu"
-          className="hamburger-menu relative cursor-pointer"
-          onClick={toggleDropdown}
-        >
-          <div className="text-[14px] sm:text-[30px] text-[#F3F4F6]">
-            &#9776;
+        <div className="right-section flex justify-end items-center">
+          <div className="cart relative mr-5">
+            <a href="/cart" className="relative inline-block">
+              <div className="relative">
+                <CartIcon className="w-8 h-8 text-white" />
+                {cartItems.length >= 0 && (
+                  <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-bold">
+                    {cartItems.length}
+                  </div>
+                )}
+              </div>
+            </a>
           </div>
-          {isDropdownOpen && (
-            <div
-              id="dropdownMenu"
-              className="dropdown-menu absolute right-1 mt-[30px] bg-[rgba(106,17,203,0.4)] shadow-[0_4px_10px_rgba(0,0,0,0.1)] rounded-[5px] overflow-hidden max-w-[350px] max-h-[500vh] z-10"
-            >
-              <ul className="list-none p-0 m-5 ">
-                <li className="px-5 py-[15px]">
-                  <Link
-                    to="/profile"
-                    className="text-[#fafafa] text-[16px] sm:text-[18px] no-underline relative hover:text-[#696969] hover:after:content-[''] hover:after:absolute hover:after:w-full hover:after:h-[2px] hover:after:left-0 hover:after:bottom-0 hover:after:bg-[#d3d3d3] hover:after:transform hover:after:scale-x-100 hover:after:transition-transform"
-                  >
-                    Profile
-                  </Link>
-                </li>
-                <li className="px-5 py-[15px]">
-                  <Link
-                    to="/settings"
-                    className="text-[#fafafa] text-[16px] sm:text-[18px] no-underline relative hover:text-[#696969] hover:after:content-[''] hover:after:absolute hover:after:w-full hover:after:h-[2px] hover:after:left-0 hover:after:bottom-0 hover:after:bg-[#d3d3d3] hover:after:transform hover:after:scale-x-100 hover:after:transition-transform"
-                  >
-                    Settings
-                  </Link>
-                </li>
-                <li className="px-5 py-[15px]">
-                  <Link
-                    to="/login"
-                    className="text-[#fafafa] text-[16px] sm:text-[18px] no-underline relative hover:text-[#696969] hover:after:content-[''] hover:after:absolute hover:after:w-full hover:after:h-[2px] hover:after:left-0 hover:after:bottom-0 hover:after:bg-[#d3d3d3] hover:after:transform hover:after:scale-x-100 hover:after:transition-transform"
-                  >
-                    {loginStatus}
-                  </Link>
-                </li>
-              </ul>
+
+          <div
+            id="hamburgerMenu"
+            className="hamburger-menu relative cursor-pointer"
+            onClick={toggleSidebar}
+          >
+            <div className="text-[14px] sm:text-[30px] text-[#F3F4F6]">
+              &#9776;
             </div>
-          )}
+          </div>
         </div>
+      </header>
+
+      {/* Sidebar */}
+      {isSidebarOpen && (
+        <div className="fixed inset-0 flex z-30">
+          {/* Adjust the sidebar position */}
+          <div
+            className={`sidebar bg-white w-64 h-full shadow-lg z-20 transition-transform transform ${
+              isSidebarOpen ? "translate-x-0" : "translate-x-full"
+            } right-0`}
+          >
+            <div className="flex items-center p-4 border-b">
+              <a href="/">
+                <img
+                  src="/image/agni logo.png"
+                  alt="Smart Shopping Logo"
+                  className="w-20"
+                />
+              </a>
+            </div>
+            <ul className="list-none p-5">
+              <li className="mb-5">
+                <a
+                  href="/profile"
+                  className="text-gray-700 hover:text-[#2575fc]"
+                >
+                  Profile
+                </a>
+              </li>
+              <li className="mb-5">
+                <a
+                  href="/settings"
+                  className="text-gray-700 hover:text-[#2575fc]"
+                >
+                  Settings
+                </a>
+              </li>
+              <li className="mb-5">
+                <a href="/login" className="text-gray-700 hover:text-[#2575fc]">
+                  {loginStatus}
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div
+            className="overlay fixed inset-0 bg-black opacity-50 z-10"
+            onClick={toggleSidebar}
+          />
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div
+        className={`main-content ${
+          isSidebarOpen ? "blur-sm" : ""
+        } transition-all`}
+      >
+        <div className="marquee" />
+        <div className="carousel" />
       </div>
-    </header>
+    </>
   );
 };
 

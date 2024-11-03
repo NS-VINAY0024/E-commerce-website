@@ -78,7 +78,7 @@ const MainContent = () => {
                 key={slide.id}
                 className="min-w-full flex justify-center items-center h-full"
               >
-                <div className="card w-full max-w-lg bg-white shadow-xl hover:shadow-2xl rounded-lg overflow-hidden h-full transition-shadow duration-300 ease-in-out">
+                <div className="card w-full max-w-2xl shadow-xl rounded-lg overflow-hidden h-full transition-shadow duration-300 ease-in-out">
                   <img
                     src={slide.image}
                     alt={slide.alt}

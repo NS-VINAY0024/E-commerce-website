@@ -9,6 +9,7 @@ const AuthPages = () => {
   const [otpVisible, setOtpVisible] = useState(false);
   const [otp, setOtp] = useState("");
   const [generatedOtp, setGeneratedOtp] = useState("");
+  const [loggedIn, setLoggedIn] = useState(false); // New state for login status
 
   const [formData, setFormData] = useState({
     username: "",
@@ -61,8 +62,9 @@ const AuthPages = () => {
         setGeneratedOtp(otp);
         setOtpVisible(true);
       } else {
+        // Simulate login success
         console.log("Logged in:", formData);
-        // Add your login API integration here
+        setLoggedIn(true); // Set loggedIn to true
       }
     } catch (err) {
       setError("An error occurred. Please try again.");
@@ -73,16 +75,25 @@ const AuthPages = () => {
 
   const handleOtpVerification = () => {
     if (otp === sessionStorage.getItem("otp")) {
-      alert("OTP Verified! Redirecting to login page...");
-      // Redirect to the login page after successful OTP verification
-      window.location.href = "login.html";
+      alert("OTP Verified! Redirecting to homepage...");
+      // Redirect to the homepage after successful OTP verification
+      window.location.href = "homepage.html"; // Change to your homepage URL
     } else {
       alert("Invalid OTP. Please try again.");
     }
   };
 
+  // If logged in, render the homepage content instead
+  if (loggedIn) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-purple-500 to-blue-500">
+        <h1 className="text-4xl text-white">Welcome to the Homepage!</h1>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex justify-center items-center h-screen bg-gradient-to-r from-purple-500 to-blue-500">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-purple-500 to-blue-500 ">
       <div className="bg-white p-8 rounded-lg shadow-lg w-80 text-center">
         <h2 className="text-2xl text-purple-600 mb-6">
           {isLogin ? "Login" : "Sign Up"}
