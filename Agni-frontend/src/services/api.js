@@ -1,9 +1,16 @@
 const BASE_URL = process.env.REACT_APP_API_URL;
 
+const handleResponse = async (response) => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+};
+
 export const api = {
     get: async (endpoint) => {
         const response = await fetch(`${BASE_URL}${endpoint}`);
-        return response.json();
+        return handleResponse(response);
     },
     post: async (endpoint, data) => {
         const response = await fetch(`${BASE_URL}${endpoint}`, {
@@ -13,6 +20,6 @@ export const api = {
             },
             body: JSON.stringify(data),
         });
-        return response.json();
+        return handleResponse(response);
     }
 };

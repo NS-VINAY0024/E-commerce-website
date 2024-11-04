@@ -1,12 +1,13 @@
 import React from "react";
-import MainContent from "../../components/MainContent";
-import Categories from "../../components/ProductComponents/categories";
+import MainContent from "../../components/layout/MainContent";
+import CategorySection from "../../components/layout/components/categories"
+
 
 const Home = () => {
   return (
     <div>
       <MainContent />
-      <Categories />
+      <CategorySection />
     </div>
   );
 };

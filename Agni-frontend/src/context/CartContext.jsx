@@ -1,4 +1,3 @@
-// src/context/CartContext.jsx
 import React, { createContext, useReducer } from "react";
 
 const initialState = {
@@ -16,7 +15,22 @@ export const cartReducer = (state, action) => {
         items: [...state.items, action.payload],
         total: state.total + action.payload.price,
       };
-    // Add other cases
+    case "REMOVE_FROM_CART":
+      const updatedItems = state.items.filter(
+        (item) => item.id !== action.payload.id
+      );
+      const updatedTotal = updatedItems.reduce(
+        (acc, item) => acc + item.price,
+        0
+      );
+      return {
+        ...state,
+        items: updatedItems,
+        total: updatedTotal,
+      };
+    case "CLEAR_CART":
+      return initialState; // Reset to initial state
+    // Add other cases as needed
     default:
       return state;
   }
@@ -24,8 +38,23 @@ export const cartReducer = (state, action) => {
 
 export const CartProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
+
+  const addToCart = (item) => {
+    dispatch({ type: "ADD_TO_CART", payload: item });
+  };
+
+  const removeFromCart = (item) => {
+    dispatch({ type: "REMOVE_FROM_CART", payload: item });
+  };
+
+  const clearCart = () => {
+    dispatch({ type: "CLEAR_CART" });
+  };
+
   return (
-    <CartContext.Provider value={{ state, dispatch }}>
+    <CartContext.Provider
+      value={{ state, addToCart, removeFromCart, clearCart }}
+    >
       {children}
     </CartContext.Provider>
   );

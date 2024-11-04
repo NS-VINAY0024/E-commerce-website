@@ -1,4 +1,7 @@
+// src/hooks/useAuth.js
 import { useState } from "react";
+import { authService } from "../services/auth";
+import { setItem, removeItem } from "../utils/localStorage"; // Import local storage utils
 
 export const useAuth = () => {
   const [user, setUser] = useState(null);
@@ -7,13 +10,20 @@ export const useAuth = () => {
   const login = async (credentials) => {
     setLoading(true);
     try {
-      // API call logic here
+      const userData = await authService.login(credentials);
+      setItem("authToken", userData.token); // Save token to localStorage using utility
+      setUser(userData);
     } catch (error) {
-      console.error(error);
+      console.error("Login failed:", error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  return { user, loading, login };
+  const logout = () => {
+    removeItem("authToken"); // Clear token from localStorage using utility
+    setUser(null);
+  };
+
+  return { user, loading, login, logout };
 };

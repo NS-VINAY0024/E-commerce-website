@@ -3,14 +3,46 @@ import React, { useState, useEffect, useCallback } from "react";
 const MainContent = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const slides = [
-    { id: 1, image: `${process.env.PUBLIC_URL}/image/1.png`, alt: "Product 1" },
-    { id: 2, image: `${process.env.PUBLIC_URL}/image/2.png`, alt: "Product 2" },
-    { id: 3, image: `${process.env.PUBLIC_URL}/image/3.png`, alt: "Product 3" },
-    { id: 4, image: `${process.env.PUBLIC_URL}/image/4.png`, alt: "Product 4" },
-    { id: 5, image: `${process.env.PUBLIC_URL}/image/5.png`, alt: "Product 5" },
-    { id: 6, image: `${process.env.PUBLIC_URL}/image/6.png`, alt: "Product 6" },
-    { id: 7, image: `${process.env.PUBLIC_URL}/image/7.png`, alt: "Product 7" },
-    { id: 8, image: `${process.env.PUBLIC_URL}/image/8.png`, alt: "Product 8" },
+    {
+      id: 1,
+      image: `${process.env.PUBLIC_URL}/image/1.png`,
+      alt: "High-quality Product 1",
+    },
+    {
+      id: 2,
+      image: `${process.env.PUBLIC_URL}/image/2.png`,
+      alt: "High-quality Product 2",
+    },
+    {
+      id: 3,
+      image: `${process.env.PUBLIC_URL}/image/3.png`,
+      alt: "High-quality Product 3",
+    },
+    {
+      id: 4,
+      image: `${process.env.PUBLIC_URL}/image/4.png`,
+      alt: "High-quality Product 4",
+    },
+    {
+      id: 5,
+      image: `${process.env.PUBLIC_URL}/image/5.png`,
+      alt: "High-quality Product 5",
+    },
+    {
+      id: 6,
+      image: `${process.env.PUBLIC_URL}/image/6.png`,
+      alt: "High-quality Product 6",
+    },
+    {
+      id: 7,
+      image: `${process.env.PUBLIC_URL}/image/7.png`,
+      alt: "High-quality Product 7",
+    },
+    {
+      id: 8,
+      image: `${process.env.PUBLIC_URL}/image/8.png`,
+      alt: "High-quality Product 8",
+    },
   ];
 
   const discounts = [
@@ -82,6 +114,7 @@ const MainContent = () => {
                   <img
                     src={slide.image}
                     alt={slide.alt}
+                    loading="lazy" // Added lazy loading for better performance
                     className="w-full h-full object-cover"
                   />
                 </div>
