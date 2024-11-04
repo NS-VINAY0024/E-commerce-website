@@ -28,7 +28,7 @@ const Settings = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-md">
+    <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-md m-5">
       <h1 className="text-2xl font-bold mb-6">Account Settings</h1>
 
       {/* Change Password Section */}

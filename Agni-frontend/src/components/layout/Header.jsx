@@ -75,7 +75,7 @@ const Header = () => {
               </li>
               <li className="mr-5">
                 <a
-                  href="#"
+                  href="*"
                   className="no-underline text-[#F3F4F6] text-[14px] sm:text-[18px] font-bold hover:text-[#2575fc]"
                 >
                   Items

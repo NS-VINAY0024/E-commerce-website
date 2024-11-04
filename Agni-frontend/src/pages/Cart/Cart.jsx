@@ -1,12 +1,29 @@
-// src/Cart/Cart.jsx
-import React from "react";
+import React, { useEffect } from "react";
 import { useCart } from "../../hooks/useCart";
 import CartItem from "./CartItem";
 import CartSummary from "./CartSummary";
 import CartEmpty from "./CartEmpty";
+import { fetchSmartCartData } from "../../services/api"; // Import API function
 
 const Cart = () => {
-  const { state } = useCart();
+  const { state, setCartItems } = useCart(); // Ensure your hook can set items
+
+  // Fetch smart cart data on load and on update
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const items = await fetchSmartCartData(); // Fetching data from smart cart
+        setCartItems(items); // Update the cart with smart cart data
+      } catch (error) {
+        console.error("Error fetching smart cart data:", error);
+      }
+    };
+
+    fetchData();
+
+    const interval = setInterval(fetchData, 5000); // Poll every 5 seconds for updates
+    return () => clearInterval(interval); // Cleanup on component unmount
+  }, [setCartItems]);
 
   if (state.items.length === 0) {
     return <CartEmpty />;
