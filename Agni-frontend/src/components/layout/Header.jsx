@@ -25,11 +25,6 @@ const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
 
-  // Toggle dropdown menu
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
   // Toggle sidebar menu
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);

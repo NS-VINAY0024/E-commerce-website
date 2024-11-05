@@ -21,30 +21,15 @@ export const api = {
             body: JSON.stringify(data),
         });
         return handleResponse(response);
-    }
+    },
 };
 
-
-
+// Fetch data for the smart cart
 export const fetchSmartCartData = async () => {
-    const response = await fetch('/api/smartcart'); // Adjust endpoint as needed
-    if (!response.ok) {
-        throw new Error('Failed to fetch smart cart data');
-    }
-    return await response.json();
+    return await api.get('/api/smartcart'); // Use the api.get method
 };
 
-
+// Process payment
 export const processPayment = async (items) => {
-    const response = await fetch('/api/payment', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ items }),
-    });
-    if (!response.ok) {
-        throw new Error('Payment processing failed');
-    }
-    return await response.json(); // Expecting { success: true/false }
+    return await api.post('/api/payment', { items }); // Use the api.post method
 };
