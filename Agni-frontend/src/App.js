@@ -40,8 +40,8 @@ const App = () => {
   ].includes(location.pathname);
 
   return (
-    <NotificationProvider> {/* Wrap with NotificationProvider */}
-      <CartProvider> {/* Wrap CartProvider here */}
+    <CartProvider>
+      <NotificationProvider>
         <div className="min-h-screen flex flex-col">
           {/* Render Header and Footer only if not on auth pages and not on NotFound page */}
           {!isAuthPage && !isNotFoundPage && <Header />}
@@ -82,8 +82,8 @@ const App = () => {
           {/* Render Footer only if not on auth pages and not on NotFound page */}
           {!isAuthPage && !isNotFoundPage && <Footer />}
         </div>
-      </CartProvider>
-    </NotificationProvider>
+      </NotificationProvider>
+    </CartProvider>
   );
 };
 

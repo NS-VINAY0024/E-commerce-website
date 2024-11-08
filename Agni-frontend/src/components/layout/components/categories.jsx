@@ -125,7 +125,7 @@ const CategorySection = () => {
   ];
 
   return (
-    <div className="bg-gradient-to-r from-[#6a11cb] to-[#2575fc] max-w-full mx-auto px-4 mt-10 sm:px-6 lg:px-8">
+    <div className="bg-gradient-to-r from-[#6a11cb] to-[#2575fc] max-w-full -mt- sm:my-10 lg:my-20 px-4 sm:px-6 lg:px-8 ">
       <div className="mb-8">
         <h2 className="text-4xl font-bold text-gray-200 text-center">
           Shop by Category

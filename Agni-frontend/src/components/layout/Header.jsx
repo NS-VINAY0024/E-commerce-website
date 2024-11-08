@@ -49,7 +49,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="grid grid-cols-2 items-center bg-gradient-to-r from-[#6a11cb] to-[#2575fc] p-3 sm:p-4 md:p-5 shadow-md">
+      <header className="grid grid-cols-[2fr_1fr] items-center bg-gradient-to-r from-[#6a11cb] to-[#2575fc] p-3 sm:p-4 md:p-5 shadow-md">
         <div className="left-section flex items-center">
           <a href="/" className="mr-5">
             <img
@@ -88,7 +88,7 @@ const Header = () => {
           </nav>
         </div>
 
-        <div className="right-section flex justify-end items-center">
+        <div className="right-section  flex justify-end items-center">
           <div className="cart relative mr-5">
             <a
               href="/cart"
@@ -96,7 +96,7 @@ const Header = () => {
               aria-label="View Cart"
             >
               <div className="relative">
-                <CartIcon className="w-8 h-8 text-white" />
+                <CartIcon className="w-[18px] sm:w-[24px] text-white" />
                 {cartItems.length > 0 && (
                   <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-bold">
                     {cartItems.length}
@@ -112,7 +112,7 @@ const Header = () => {
             onClick={toggleSidebar}
             aria-label="Toggle Sidebar"
           >
-            <div className="text-[14px] sm:text-[30px] text-[#F3F4F6]">
+            <div className="text-[14px] sm:text-[18px] text-[#F3F4F6]">
               &#9776;
             </div>
           </div>
