@@ -14,7 +14,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.log('Database connection error:', err));
 
-const authRoutes = require('./routes/auth');
+const authRoutes = require('./src/routes/auth');
 app.use('/api/auth', authRoutes);
 
 
