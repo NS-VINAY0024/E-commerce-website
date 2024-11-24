@@ -1,7 +1,7 @@
-require('dotenv').config(); // Loads environment variables from .env
+require('dotenv').config(); // Load environment variables
 const express = require('express');
 const cors = require('cors');
-const connectDB = require('./config/db'); // Import centralized DB connection logic
+const connectDB = require('./config/db'); // Database connection logic
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -9,29 +9,29 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
-// Middleware
+// Core Middleware
 app.use(cors());
-app.use(express.json()); // Parses incoming JSON requests
+app.use(express.json()); // Parse JSON request bodies
 
-// Import routes
+// Route Handlers
 const userRoutes = require('./routes/user');
-app.use('/api/user', userRoutes); // Prefix all user-related routes with '/api/user'
+app.use('/api/user', userRoutes);
 
-// Basic Route for testing
-app.get('/', (req, res) => {
-    res.send('API is running...');
-});
+// Error Handling Middleware (must be last)
+app.use(errorHandler);
 
-// Another Test Route
-app.get('/Agni', (req, res) => {
-    res.send("Hello!!, It's Agni Team");
-});
-
-// Error Handling Middleware
-app.use(errorHandler); // Ensure this is placed after routes
-
-// Start the Server
+// Server Configuration
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+});
+
+
+
+// Health Check Routes only for testing
+app.get('/', (req, res) => {
+    res.json({ message: 'API is running...' });
+});
+app.get('/Agni', (req, res) => {
+    res.json({ message: "Hello!!, It's Agni Team" });
 });
