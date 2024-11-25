@@ -95,7 +95,7 @@ const MainContent = () => {
           Browse items, manage your cart, and explore our smart mart map!
           <br />
           Best sellers, Mega sale live now!
-          <span className="inline-block bg-red-500 rounded-full w-2 h-2 ml-2"></span>
+          <span className="inline-block bg-[#FF0000] rounded-full w-3 h-3 ml-2 animate-pulse"></span>
         </p>
 
         {/* Carousel Section */}
