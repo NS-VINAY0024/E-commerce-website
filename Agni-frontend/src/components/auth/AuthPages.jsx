@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import Button from "../ui/Button"; // Import your Button component
-import Input from "../ui/Input"; // Import your Input component
-import Modal from "../ui/Modal"; // Import your Modal component
+import { useNavigate } from "react-router-dom";
+import Button from "../ui/Button";
+import Input from "../ui/Input";
+import Modal from "../ui/Modal";
+
+const API_URL = "http://localhost:5004/api/auth"; // Update with your actual backend URL
 
 const AuthPages = () => {
-  const navigate = useNavigate(); // Initialize navigate function
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -18,6 +20,7 @@ const AuthPages = () => {
 
   const [formData, setFormData] = useState({
     username: "",
+    email: "", // Adding email field for registration
     password: "",
     confirmPassword: "",
     phone: "",
@@ -33,46 +36,61 @@ const AuthPages = () => {
   };
 
   const validateForm = () => {
-    if (!formData.username || !formData.password) {
+    if (
+      !formData.username ||
+      !formData.password ||
+      (!isLogin && !formData.email)
+    ) {
       setError("Please fill in all required fields");
       return false;
     }
-
     if (!isLogin && formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       return false;
     }
-
     if (!isLogin && formData.password.length < 8) {
       setError("Password must be at least 8 characters long");
       return false;
     }
-
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) return;
 
     setLoading(true);
+    setError(""); // Reset error state
     try {
-      if (!isLogin) {
-        // Simulate sending OTP
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        console.log("OTP sent to:", formData.phone);
-        console.log("Generated OTP (for testing):", otp);
-        sessionStorage.setItem("otp", otp);
-        setGeneratedOtp(otp);
-        setOtpVisible(true);
-      } else {
-        // Simulate login success
-        console.log("Logged in:", formData);
+      const response = await fetch(
+        `${API_URL}/${isLogin ? "login" : "register"}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: formData.username,
+            email: formData.email,
+            password: formData.password,
+          }),
+        }
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+
+      if (isLogin) {
+        // On successful login
         setLoggedIn(true);
+        navigate("/");
+      } else {
+        // On successful registration
+        alert("Registration successful! Please login.");
+        setIsLogin(true); // Switch to login mode after registration
       }
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      setError(err.message || "An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -81,13 +99,12 @@ const AuthPages = () => {
   const handleOtpVerification = () => {
     if (otp === sessionStorage.getItem("otp")) {
       alert("OTP Verified! Redirecting to homepage...");
-      navigate("/"); // Redirect using navigate
+      navigate("/");
     } else {
       alert("Invalid OTP. Please try again.");
     }
   };
 
-  // If logged in, render the homepage content instead
   if (loggedIn) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-purple-500 to-blue-500">
@@ -111,7 +128,16 @@ const AuthPages = () => {
             placeholder="Username"
             required
           />
-
+          {!isLogin && (
+            <Input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="Email"
+              required
+            />
+          )}
           <div className="relative mb-6">
             <Input
               type={showPassword ? "text" : "password"}
@@ -129,7 +155,6 @@ const AuthPages = () => {
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
-
           {!isLogin && (
             <>
               <Input
@@ -150,20 +175,17 @@ const AuthPages = () => {
               />
             </>
           )}
-
           {error && (
             <div className="bg-red-100 text-red-600 p-2 rounded mb-4">
               {error}
             </div>
           )}
-
           <Button type="submit" disabled={loading} className="w-full">
             {loading ? (
               <Loader2 className="animate-spin mr-2" size={20} />
             ) : null}
             {isLogin ? "Login" : "Sign Up"}
           </Button>
-
           <p className="mt-4 text-gray-700">
             {isLogin ? "Don't have an account? " : "Already have an account? "}
             <button
@@ -176,8 +198,6 @@ const AuthPages = () => {
           </p>
         </form>
       </div>
-
-      {/* OTP Verification Popup */}
       <Modal
         isOpen={otpVisible}
         onClose={() => setOtpVisible(false)}

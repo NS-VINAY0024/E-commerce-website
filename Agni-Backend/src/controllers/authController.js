@@ -1,9 +1,23 @@
-// controllers/authController.js
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
+const { body, validationResult } = require('express-validator');
+
+// Validation for registration
+exports.validateRegister = [
+    body('username').notEmpty().withMessage('Username is required'),
+    body('email').isEmail().withMessage('Invalid email'),
+    body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];
 
 // Register a new user
-exports.register = async (req, res) => {
+exports.register = async (req, res,next) => {
     try {
         const { username, email, password } = req.body;
 
@@ -17,15 +31,15 @@ exports.register = async (req, res) => {
 
         // Generate a token
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        
+
         res.status(201).json({ message: 'User registered successfully', token });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error });
+        next(error);
     }
 };
 
 // Login an existing user
-exports.login = async (req, res) => {
+exports.login = async (req, res,next) => {
     try {
         const { email, password } = req.body;
 
@@ -42,6 +56,6 @@ exports.login = async (req, res) => {
 
         res.json({ message: 'Logged in successfully', token });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error });
+        next(error);
     }
 };

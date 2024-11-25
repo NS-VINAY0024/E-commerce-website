@@ -6,7 +6,7 @@ const handleResponse = async (response) => {
     const text = await response.text(); // Get raw response text
 
     if (!response.ok) {
-        console.error(`Error fetching data: ${text}`); // Log the error response
+        console.error(`Error fetching data: ${text}`); // Corrected
         throw new Error(`HTTP error! status: ${response.status}`);
     }
 
@@ -35,12 +35,20 @@ export const api = {
     },
 };
 
-// Fetch data for the smart cart
 export const fetchSmartCartData = async () => {
-    return await api.get("/api/smartcart");
+    try {
+        return await api.get("/api/smartcart");
+    } catch (error) {
+        console.error("Failed to fetch smart cart data:", error);
+        throw error;
+    }
 };
 
-// Process payment
 export const processPayment = async (items) => {
-    return await api.post("/api/payment", { items });
+    try {
+        return await api.post("/api/payment", { items });
+    } catch (error) {
+        console.error("Payment processing failed:", error);
+        throw error;
+    }
 };
