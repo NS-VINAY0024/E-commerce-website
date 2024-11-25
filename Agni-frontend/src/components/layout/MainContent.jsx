@@ -5,42 +5,42 @@ const MainContent = () => {
   const slides = [
     {
       id: 1,
-      image: `${process.env.PUBLIC_URL}/image/1.png`,
+      image: `${process.env.PUBLIC_URL}/image/01.png`,
       alt: "High-quality Product 1",
     },
     {
       id: 2,
-      image: `${process.env.PUBLIC_URL}/image/2.png`,
+      image: `${process.env.PUBLIC_URL}/image/02.png`,
       alt: "High-quality Product 2",
     },
     {
       id: 3,
-      image: `${process.env.PUBLIC_URL}/image/3.png`,
+      image: `${process.env.PUBLIC_URL}/image/03.png`,
       alt: "High-quality Product 3",
     },
     {
       id: 4,
-      image: `${process.env.PUBLIC_URL}/image/4.png`,
+      image: `${process.env.PUBLIC_URL}/image/04.png`,
       alt: "High-quality Product 4",
     },
     {
       id: 5,
-      image: `${process.env.PUBLIC_URL}/image/5.png`,
+      image: `${process.env.PUBLIC_URL}/image/05.png`,
       alt: "High-quality Product 5",
     },
     {
       id: 6,
-      image: `${process.env.PUBLIC_URL}/image/6.png`,
+      image: `${process.env.PUBLIC_URL}/image/06.png`,
       alt: "High-quality Product 6",
     },
     {
       id: 7,
-      image: `${process.env.PUBLIC_URL}/image/7.png`,
+      image: `${process.env.PUBLIC_URL}/image/07.png`,
       alt: "High-quality Product 7",
     },
     {
       id: 8,
-      image: `${process.env.PUBLIC_URL}/image/8.png`,
+      image: `${process.env.PUBLIC_URL}/image/08.png`,
       alt: "High-quality Product 8",
     },
   ];
@@ -95,7 +95,7 @@ const MainContent = () => {
           Browse items, manage your cart, and explore our smart mart map!
           <br />
           Best sellers, Mega sale live now!
-          <span className="inline-block bg-[#FF0000] rounded-full w-3 h-3 ml-2 animate-pulse"></span>
+          <span className="inline-block bg-[#fe2323] rounded-full w-3 h-3 ml-2 animate-pulse"></span>
         </p>
 
         {/* Carousel Section */}
