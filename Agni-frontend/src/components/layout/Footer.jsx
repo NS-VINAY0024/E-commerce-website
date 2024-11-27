@@ -55,13 +55,13 @@ const Footer = () => {
       <div className="flex flex-col items-end mr-[10px]">
         <a
           href="/about" // Update with actual link
-          className="text-white no-underline my-[5px] text-[14px] sm:text-[16px] md:text-[18px] font-bold hover:text-[#2575fc]"
+          className="text-white no-underline my-[5px] text-[14px] sm:text-[16px] md:text-[18px] font-bold hover:text-[#6a11cb]"
         >
           About Us
         </a>
         <a
           href="/contact" // Update with actual link
-          className="text-white no-underline my-[5px] text-[14px] sm:text-[16px] md:text-[18px] font-bold hover:text-[#2575fc]"
+          className="text-white no-underline my-[5px] text-[14px] sm:text-[16px] md:text-[18px] font-bold hover:text-[#6a11cb]"
         >
           Contact Us
         </a>
