@@ -31,7 +31,7 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#6a11cb] to-[#2575fc] p-8 text-white">
+    <div className="min-h-screen bg-gradient-to-r from-[#6a11cb] to-[#2575fc] p-8 text-black">
       <h1 className="text-3xl font-bold mb-4">Contact Us</h1>
       {success && (
         <p className="mb-4 text-green-400">
