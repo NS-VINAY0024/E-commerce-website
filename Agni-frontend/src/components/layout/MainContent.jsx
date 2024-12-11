@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 
-const MainContent = () => {
+const MainContent = ({userName}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const slides = [
     {
@@ -87,7 +87,7 @@ const MainContent = () => {
 
         {/* Welcome Heading */}
         <h1 className="text-3xl md:text-4xl font-bold text-[#F3F4F6]">
-          Welcome to AGNI Smart Shopping Mart
+          Welcome, {userName || "Guest"} to AGNI Smart Shopping Mart
         </h1>
 
         {/* Subheading */}

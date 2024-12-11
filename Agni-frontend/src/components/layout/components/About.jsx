@@ -40,26 +40,26 @@ const About = () => {
           Meet the incredible team behind Agni Shopping. We are dedicated to
           ensuring you have the best experience possible!
         </p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 w-full">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-10 w-9/12">
           <img
             src={`${process.env.PUBLIC_URL}/image/Vinay.jpg`}
             alt="Team Member 1"
-            className="w-full object-cover rounded-lg shadow-lg"
+            className="w-full object-cover rounded-full h-64 p-10"
           />
           <img
             src={`${process.env.PUBLIC_URL}/image/Prajwal.jpg`}
             alt="Team Member 2"
-            className="w-full object-cover rounded-lg shadow-lg"
+            className="w-full object-cover rounded-full h-64 p-10"
           />
           <img
             src={`${process.env.PUBLIC_URL}/image/Poorna.jpg`}
             alt="Team Member 3"
-            className="w-full object-cover rounded-lg shadow-lg"
+            className="w-full object-cover rounded-full h-64 p-10"
           />
           <img
             src={`${process.env.PUBLIC_URL}/image/BALA.jpg`}
             alt="Team Member 4"
-            className="w-full object-cover rounded-lg shadow-lg"
+            className="w-full object-cover rounded-full h-64 p-10"
           />
         </div>
       </div>
