@@ -1,32 +1,46 @@
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET || 'a!S8D4j$9Lz3Pq@Gx2XcTp4f*mN7kQv%';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Middleware to verify JWT token
-exports.authenticateToken = (req, res, next) => {
-    const token = req.header('Authorization'); // Get token from the Authorization header
-    console.log('Token received:', token); // Add this log for debugging
-    if (!token) return res.status(401).json({ message: 'Access Denied: No Token Provided' });
-
+const authenticateToken = (req, res, next) => {
     try {
-        // Verify token
-        const decoded = jwt.verify(token.split(" ")[1], JWT_SECRET); // Token is usually "Bearer <token>"
-        req.user = decoded; // Attach user data to request object
-        next();
+        // Retrieve the token from the Authorization header
+        const authHeader = req.headers['authorization'];
+        if (!authHeader) {
+            return res.status(401).json({ message: 'Access Denied: Authorization header missing' });
+        }
+
+        // Token format should be "Bearer <token>"
+        const token = authHeader.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ message: 'Access Denied: Bearer token missing' });
+        }
+
+        // Verify and decode the token
+        const decoded = jwt.verify(token, JWT_SECRET);
+
+        // Log decoded token to check payload
+        console.log("Decoded JWT: ", decoded);
+
+        // Ensure userID exists in the decoded token and attach it to the request object
+        if (!decoded || !decoded.userID) {
+            return res.status(400).json({ message: 'User ID is missing in token' });
+        }
+
+        req.user = { userID: decoded.userID }; // Attach userID from decoded token to the request object
+        next(); // Proceed to the next middleware or route handler
     } catch (error) {
-        res.status(403).json({ message: 'Invalid or Expired Token' });
+        console.error('JWT Verification Error:', error.message);
+
+        if (error.name === 'TokenExpiredError') {
+            return res.status(403).json({ message: 'Token has expired. Please login again.' });
+        } else if (error.name === 'JsonWebTokenError') {
+            return res.status(403).json({ message: 'Invalid token. Please provide a valid token.' });
+        }
+
+        // Handle other unexpected errors
+        res.status(500).json({ message: 'An error occurred while verifying the token.' });
     }
 };
 
-const { verifyToken } = require('../utils/TokenUtils');
-
-exports.authenticateToken = (req, res, next) => {
-    const token = req.headers['authorization']?.split(' ')[1];
-    if (!token) return res.status(401).json({ message: 'Token missing' });
-
-    try {
-        req.user = verifyToken(token);
-        next();
-    } catch (error) {
-        res.status(403).json({ message: 'Unauthorized: ' + error.message });
-    }
-};
+module.exports = authenticateToken;

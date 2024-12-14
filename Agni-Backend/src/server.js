@@ -1,12 +1,12 @@
 require('dotenv').config(); // Load environment variables
 const express = require('express');
 const cors = require('cors');
+const MongoStore = require('connect-mongo');
+const session = require('express-session');
 const mongoose = require('mongoose');
 const connectDB = require('./config/db'); // Database connection logic
 const errorHandler = require('./middlewares/errorHandler');
-const session = require("express-session");
 const authRoutes = require("./routes/user");
-
 const app = express();
 const PORT = process.env.PORT;
 
@@ -25,14 +25,21 @@ app.use(
     session({
         secret: process.env.SESSION_SECRET || "a!S8D4j$9Lz3Pq@Gx2XcTp4f*mN7kQv%",
         resave: false,
-        saveUninitialized: true,
+        saveUninitialized: false,
         cookie: {
-            secure: false, // Set to true if using HTTPS
+            secure: false, // Set true for HTTPS
             httpOnly: true,
             maxAge: 1000 * 60 * 10, // 10 minutes
         },
+        store: MongoStore.create({
+            mongoUrl: process.env.MONGODB_URI,
+        }),
     })
 );
+
+
+const cartRoutes = require("./routes/cartRoute");
+app.use("/api/cart", cartRoutes);
 
 // Route Handlers
 app.use("/api/auth", authRoutes);

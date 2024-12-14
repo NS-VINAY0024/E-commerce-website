@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 // Use the same JWT_SECRET as in your application
-const JWT_SECRET = process.env.JWT_SECRET || 'yourfallbacksecret';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Test payload
 const payload = {

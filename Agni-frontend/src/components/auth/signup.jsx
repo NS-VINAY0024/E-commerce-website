@@ -7,14 +7,61 @@ import Modal from "../ui/Modal";
 
 const API_URL = "http://localhost:3000/api/auth"; // Backend URL
 
+// OTP Verification Component
+const OtpVerification = ({ email, onOtpVerified, onClose }) => {
+  const [otp, setOtp] = useState("");
+  const [error, setError] = useState("");
+
+  const handleOtpVerification = async () => {
+    try {
+      const response = await fetch(`${API_URL}/verifyotp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", // Include session cookies
+        body: JSON.stringify({ otp }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert("OTP verified successfully!");
+        onOtpVerified(); // Notify parent component that OTP is verified
+      } else {
+        setError(data.message || "Invalid OTP. Please try again.");
+      }
+    } catch (err) {
+      console.error("Error during OTP verification:", err);
+      setError("An error occurred during OTP verification.");
+    }
+  };
+
+  return (
+    <Modal isOpen onClose={onClose} title="OTP Verification">
+      <p className="mb-4">Enter the OTP sent to {email}:</p>
+      <Input
+        type="text"
+        value={otp}
+        onChange={(e) => setOtp(e.target.value)}
+        placeholder="Enter OTP"
+        required
+      />
+      {error && (
+        <div className="bg-red-100 text-red-600 p-2 rounded mb-4">{error}</div>
+      )}
+      <Button onClick={handleOtpVerification} className="w-full">
+        Verify
+      </Button>
+    </Modal>
+  );
+};
+
+// Sign Up Component
 const SignUp = ({ onSwitchToLogin }) => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [otpVisible, setOtpVisible] = useState(false);
-  const [otp, setOtp] = useState("");
-
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -81,50 +128,34 @@ const SignUp = ({ onSwitchToLogin }) => {
     }
   };
 
-  const handleOtpVerification = async () => {
-    try {
-      console.log("Sending OTP for verification:", otp);
-      const response = await fetch(`${API_URL}/verifyotp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // Include session cookies
-        body: JSON.stringify({ otp }),
-      });
-
-      const data = await response.json();
-      console.log("Response from server:", data); // Log the server's response
-
-      if (data.success) {
-        alert("OTP verified successfully!");
-        // Proceed to registration
-        const registerResponse = await fetch(`${API_URL}/register`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        });
-
-        const registerData = await registerResponse.json();
-        if (registerData.success) {
-          alert("Registration successful!");
-          navigate("/"); // Redirect to home or login page
-        } else {
-          setError(registerData.message || "Registration failed.");
-        }
-      } else {
-        setError(data.message || "Invalid OTP. Please try again.");
-      }
-    } catch (err) {
-      console.error("Error during OTP verification:", err);
-      setError("An error occurred during OTP verification.");
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
       setLoading(true);
       await sendOtp(); // Trigger OTP sending
       setLoading(false);
+    }
+  };
+
+  const handleOtpVerified = async () => {
+    try {
+      // Proceed to registration
+      const registerResponse = await fetch(`${API_URL}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const registerData = await registerResponse.json();
+      if (registerData.success) {
+        alert("Registration successful!");
+        navigate("/"); // Redirect to home or login page
+      } else {
+        setError(registerData.message || "Registration failed.");
+      }
+    } catch (err) {
+      console.error("Error during registration:", err);
+      setError("An error occurred during registration.");
     }
   };
 
@@ -192,28 +223,13 @@ const SignUp = ({ onSwitchToLogin }) => {
         </Button>
       </form>
 
-      <Modal
-        isOpen={otpVisible}
-        onClose={() => setOtpVisible(false)}
-        title="OTP Verification"
-      >
-        <p className="mb-4">Enter the OTP sent to your email:</p>
-        <Input
-          type="text"
-          value={otp}
-          onChange={(e) => setOtp(e.target.value)}
-          placeholder="Enter OTP"
-          required
+      {otpVisible && (
+        <OtpVerification
+          email={formData.email}
+          onOtpVerified={handleOtpVerified}
+          onClose={() => setOtpVisible(false)}
         />
-        {error && (
-          <div className="bg-red-100 text-red-600 p-2 rounded mb-4">
-            {error}
-          </div>
-        )}
-        <Button onClick={handleOtpVerification} className="w-full">
-          Verify
-        </Button>
-      </Modal>
+      )}
 
       <div className="text-center mt-4">
         <p>

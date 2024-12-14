@@ -55,7 +55,10 @@ exports.register = async (req, res, next) => {
         await user.save();
 
         // Generate a token
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: '1h', // Set expiration time
+        });
+
 
         res.status(201).json({ message: 'User registered successfully', token });
     } catch (error) {
@@ -104,8 +107,8 @@ exports.sendOtp = async (req, res) => {
         const otp = generateOtp();
         req.session.emailOtp = otp; // Store OTP in session
         console.log("OTP stored in session:", req.session);
-        
-        await sendOtpEmail(email, otp);
+
+        await sendOtpEmail(email, req.session.emailOtp);
         console.log("OTP during send:", req.session.emailOtp);
         res.status(200).json({ success: true, message: "OTP sent successfully" });
     } catch (error) {
@@ -121,7 +124,7 @@ exports.verifyOtp = async (req, res) => {
     console.log("OTP stored in session:", req.session.emailOtp);
 
     // Check if OTP exists in session
-    if (!req.session.emailOtp) { 
+    if (!req.session.emailOtp) {
         return res.status(400).json({ success: false, message: "No OTP found. Please request a new one." });
     }
 

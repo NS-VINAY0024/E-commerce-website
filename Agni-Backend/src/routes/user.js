@@ -1,8 +1,8 @@
 const express = require('express');
-const { register, login, validateRegister } = require('../controllers/authController');
-const { authenticateToken } = require('../middlewares/authmiddleware'); // Import authentication middleware
-const User = require('../models/user');
 const router = express.Router();
+const { register, login, validateRegister } = require('../controllers/authController');
+const authenticateToken = require('../middlewares/authmiddleware'); // Import authentication middleware
+const User = require('../models/user');
 const authController = require("../controllers/authController");
 
 // User Registration Route

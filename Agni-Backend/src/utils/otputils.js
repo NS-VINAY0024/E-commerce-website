@@ -1,11 +1,8 @@
 require('dotenv').config();
-const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 
 // Generate OTP
-exports.generateOtp = () => {
-    return crypto.randomInt(100000, 999999).toString();
-};
+exports.generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
 
 // Send OTP via email
 exports.sendOtpEmail = async (email, otp) => {
