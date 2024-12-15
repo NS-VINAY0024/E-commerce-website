@@ -11,8 +11,7 @@ const Layout = ({ children }) => {
       <header>
         <Header />
       </header>
-      <main className="flex-grow container mx-auto px-4 py-8 max-w-7xl">
-        {" "}
+      <main className="flex-grow container mx-auto px-4 py-8 max-w-full">
         {/* Added max width for better control */}
         {children}
       </main>
