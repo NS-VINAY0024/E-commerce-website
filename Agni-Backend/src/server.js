@@ -1,75 +1,36 @@
-require('dotenv').config(); // Load environment variables
-const express = require('express');
-const cors = require('cors');
-const MongoStore = require('connect-mongo');
-const session = require('express-session');
-const mongoose = require('mongoose');
-const connectDB = require('./config/db'); // Database connection logic
-const errorHandler = require('./middlewares/errorHandler');
-const authRoutes = require("./routes/user");
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import path from "path";
+
+import { connectDB } from "./DataBase/connectDB.js";
+
+import authRoutes from "./routes/auth.routes.js";
+
+dotenv.config();
+
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
+const __dirname = path.resolve();
 
-// Connect to MongoDB
-connectDB();
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
-// Core Middleware
-app.use(cors({
-    origin: "http://localhost:8082", // Frontend URL
-    credentials: true, // Allow cookies
-}));
-app.use(express.json()); // Parse JSON request bodies
+app.use(express.json()); // allows us to parse incoming requests:req.body
+app.use(cookieParser()); // allows us to parse incoming cookies
 
-// Session middleware (to store OTPs temporarily)
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET || "a!S8D4j$9Lz3Pq@Gx2XcTp4f*mN7kQv%",
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            secure: false, // Set true for HTTPS
-            httpOnly: true,
-            maxAge: 1000 * 60 * 10, // 10 minutes
-        },
-        store: MongoStore.create({
-            mongoUrl: process.env.MONGODB_URI,
-        }),
-    })
-);
-
-
-const cartRoutes = require("./routes/cartRoute");
-app.use("/api/cart", cartRoutes);
-
-// Route Handlers
 app.use("/api/auth", authRoutes);
 
-// Health Check Routes only for testing (for development mode)
-if (process.env.NODE_ENV === 'development') {
-    app.get('/', (req, res) => {
-        res.json({ message: 'API is running...' });
-    });
-    app.get('/Agni', (req, res) => {
-        res.json({ message: "Hello!!, It's Agni Team" });
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
     });
 }
 
-// Error Handling Middleware (must be last)
-app.use(errorHandler);
-
-// Server Configuration
-const server = app.listen(PORT, () => {
-    console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+app.listen(PORT, () => {
+    connectDB();
+    console.log("Server is running on port: ", PORT);
 });
 
-// Graceful Shutdown
-process.on('SIGINT', () => {
-    console.log('SIGINT signal received. Closing HTTP server gracefully.');
-    server.close(() => {
-        console.log('HTTP server closed');
-        mongoose.connection.close(false, () => {
-            console.log('MongoDB disconnected');
-            process.exit(0);
-        });
-    });
-});
