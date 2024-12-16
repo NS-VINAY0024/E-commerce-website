@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Menu, X, Home, Settings, User, LogIn } from "lucide-react";
+import { useAuthStore } from "../../Authentication/store/authstore";
 
 const CartIcon = ({ className }) => (
   <svg
@@ -20,10 +22,15 @@ const CartIcon = ({ className }) => (
 );
 
 const Header = () => {
+  const { user, logout } = useAuthStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const isAuthenticated = useAuthStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
+
+  const handleLogout = () => {
+    logout(); // Call the Zustand store's logout method
+  };
 
   // Toggle sidebar menu
   const toggleSidebar = () => {
@@ -49,7 +56,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="grid grid-cols-[2fr_1fr] items-center bg-gradient-to-r from-[#6a11cb] to-[#2575fc] p-3 sm:p-4 md:p-5 shadow-md">
+      <header className="grid grid-cols-[2fr_1fr] items-center bg-gradient-to-br from-[#6a11cb] to-[#2575fc] p-3 sm:p-4 md:p-5 shadow-md">
         <div className="left-section flex items-center">
           <a href="/" className="mr-5">
             <img
@@ -88,7 +95,7 @@ const Header = () => {
           </nav>
         </div>
 
-        <div className="right-section  flex justify-end items-center">
+        <div className="right-section flex justify-end items-center">
           <div className="cart relative mr-5">
             <a
               href="/cart"
@@ -96,7 +103,7 @@ const Header = () => {
               aria-label="View Cart"
             >
               <div className="relative">
-                <CartIcon className="w-[18px] sm:w-[24px] text-white" />
+                <CartIcon className="w-[18px] sm:w-[24px] text-white hover:text-[#6a11cb]" />
                 {cartItems.length > 0 && (
                   <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-bold">
                     {cartItems.length}
@@ -106,76 +113,81 @@ const Header = () => {
             </a>
           </div>
 
-          <div
-            id="hamburgerMenu"
-            className="hamburger-menu relative cursor-pointer"
+          <button
             onClick={toggleSidebar}
+            className="text-white ml-4 hover:text-[#6a11cb]"
             aria-label="Toggle Sidebar"
           >
-            <div className="text-[14px] sm:text-[18px] text-[#F3F4F6]">
-              &#9776;
-            </div>
-          </div>
+            {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
       </header>
 
       {/* Sidebar */}
       {isSidebarOpen && (
-        <div className="fixed inset-0 flex z-30">
+        <>
+          {/* Overlay */}
           <div
-            className={`sidebar bg-white w-64 h-full shadow-lg z-20 transition-transform transform ${
-              isSidebarOpen ? "translate-x-0" : "translate-x-full"
-            } right-0`}
-          >
-            <div className="flex items-center p-4 border-b">
-              <a href="/">
-                <img
-                  src={`${process.env.PUBLIC_URL}/image/agni logo.png`}
-                  alt="Smart Shopping Logo"
-                  className="w-20"
-                />
-              </a>
-            </div>
-            <ul className="list-none p-5">
-              <li className="mb-5">
-                <a
-                  href="/profile"
-                  className="text-gray-700 hover:text-[#2575fc]"
-                >
-                  Profile
-                </a>
-              </li>
-              <li className="mb-5">
-                <a
-                  href="/settings"
-                  className="text-gray-700 hover:text-[#2575fc]"
-                >
-                  Settings
-                </a>
-              </li>
-              <li className="mb-5">
-                <a href="/login" className="text-gray-700 hover:text-[#2575fc]">
-                  {userLoggedIn ? "Logout" : "Login"}
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div
-            className="overlay fixed inset-0 bg-black opacity-50 z-10"
+            className="fixed inset-0 bg-black bg-opacity-80 z-40"
             onClick={toggleSidebar}
           />
-        </div>
-      )}
 
-      {/* Main Content */}
-      <div
-        className={`main-content ${
-          isSidebarOpen ? "blur-sm" : ""
-        } transition-all`}
-      >
-        <div className="marquee" />
-        <div className="carousel" />
-      </div>
+          {/* Sidebar Content */}
+          <div
+            className={`
+              fixed top-0 right-0 h-full w-64 bg-white shadow-lg 
+              transform transition-transform duration-300 ease-in-out z-50
+              ${isSidebarOpen ? "translate-x-0" : "translate-x-full"}
+            `}
+          >
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <a href="/">
+                  <img
+                    src={`${process.env.PUBLIC_URL}/image/agni logo.png`}
+                    alt="Smart Shopping Logo"
+                    className="w-20"
+                  />
+                </a>
+                <button onClick={toggleSidebar} className="text-gray-600">
+                  <X size={24} />
+                </button>
+              </div>
+
+              <nav className="space-y-4">
+                <a
+                  href="/profile"
+                  className="flex items-center space-x-3 text-gray-700 hover:bg-gray-100 p-2 rounded-md transition-colors"
+                >
+                  <User size={20} />
+                  <span>Profile</span>
+                </a>
+
+                <a
+                  href="/settings"
+                  className="flex items-center space-x-3 text-gray-700 hover:bg-gray-100 p-2 rounded-md transition-colors"
+                >
+                  <Settings size={20} />
+                  <span>Settings</span>
+                </a>
+                <a
+                  href={isAuthenticated ? "/logout" : "/login"}
+                  onClick={(e) => {
+                    if (isAuthenticated) {
+                      e.preventDefault(); // Prevent navigation to "/logout"
+                      handleLogout(); // Call the logout function
+                    }
+                  }}
+                  className="flex items-center space-x-3 text-gray-700 hover:bg-gray-100 p-2 rounded-md transition-colors"
+                >
+                  <LogIn size={20} />
+                  <span>{isAuthenticated ? "Logout" : "Login"}</span>
+                </a>
+              </nav>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 };

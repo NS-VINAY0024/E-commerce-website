@@ -71,11 +71,12 @@ const App = () => {
       location.pathname === '/login' ||
       location.pathname === '/signup' ||
       location.pathname === '/forgot-password' ||
-      location.pathname === '/reset-password'
+      location.pathname === '/reset-password' ||
+      location.pathname === '/verify-email'
     );
   };
   const isAuthPage = useAuthPageCheck();
-    
+
 
 
   const isNotFoundPage = location.pathname !== '/' && ![
@@ -98,28 +99,31 @@ const App = () => {
 
           <main className="min-h-screen bg-gradient-to-br from-[#6a11cb] to-[#2575fc] flex items-center justify-center relative overflow-hidden"
           >
-            <FloatingShape
-              color="bg-[#0c11cb]"
-              size="w-64 h-64"
-              top="-5%"
-              left="10%"
-              delay={0}
-            />
-            <FloatingShape
-              color="bg-[#fa11cb]"
-              size="w-48 h-48"
-              top="70%"
-              left="80%"
-              delay={5}
-            />
-            <FloatingShape
-              color="bg-[#f575fc]"
-              size="w-32 h-32"
-              top="40%"
-              left="-10%"
-              delay={2}
-            />
-
+            {isAuthPage && (
+              <>
+                <FloatingShape
+                  color="bg-[#0c11cb]"
+                  size="w-64 h-64"
+                  top="-5%"
+                  left="10%"
+                  delay={0}
+                />
+                <FloatingShape
+                  color="bg-[#fa11cb]"
+                  size="w-48 h-48"
+                  top="70%"
+                  left="80%"
+                  delay={5}
+                />
+                <FloatingShape
+                  color="bg-[#f575fc]"
+                  size="w-32 h-32"
+                  top="40%"
+                  left="-10%"
+                  delay={2}
+                />
+              </>
+            )}
             <Routes>
               {/* Auth routes */}
               <Route

@@ -5,13 +5,13 @@ import Footer from "./Footer";
 
 const Layout = ({ children }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen">
       {" "}
       {/* Added background color */}
       <header>
         <Header />
       </header>
-      <main className="flex-grow container mx-auto px-4 py-8 max-w-full">
+      <main className="flex-grow container mx-auto max-w-full">
         {/* Added max width for better control */}
         {children}
       </main>

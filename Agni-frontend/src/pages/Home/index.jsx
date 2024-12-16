@@ -1,26 +1,18 @@
 import React, { useEffect, useState } from "react";
 import MainContent from "../../components/layout/MainContent";
 import CategorySection from "../../components/layout/components/categories";
+import { useAuthStore } from "../../Authentication/store/authstore";
 const Home = () => {
-  const [userName, setUserName] = useState("");
-
+  const {user, isAuthenticated, checkAuth } = useAuthStore();
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      const token = localStorage.getItem("authToken");
-      if (token) {
-        const response = await fetch("http://localhost:3000/api/auth/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await response.json();
-        setUserName(data.user.username);
-      }
-    };
-    fetchUserProfile();
-  }, []);
+    if (!user && isAuthenticated) {
+      checkAuth(); // Ensure we have the latest user data
+    }
+  }, [user, isAuthenticated, checkAuth]);
 
   return (
     <div>
-      <MainContent userName={userName} />
+      <MainContent userName={user.name}/>
       <CategorySection />
     </div>
   );

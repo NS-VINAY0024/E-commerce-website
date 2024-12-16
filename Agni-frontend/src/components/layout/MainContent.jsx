@@ -72,7 +72,7 @@ const MainContent = ({userName}) => {
   }, [nextSlide]);
 
   return (
-    <main className="w-full bg-gradient-to-r from-[#6a11cb] to-[#2575fc] min-h-screen p-0">
+    <main className="w-full bg-gradient-to-br from-[#6a11cb] to-[#2575fc] min-h-screen p-0">
       <div className="grid grid-cols-1 grid-rows-[auto_auto_auto_1fr] text-center text-silver">
         {/* Marquee Section */}
         <div className="bg-yellow-300 h-4 flex items-center overflow-hidden md:h-8">
@@ -87,7 +87,7 @@ const MainContent = ({userName}) => {
 
         {/* Welcome Heading */}
         <h1 className="text-3xl md:text-4xl font-bold text-[#F3F4F6]">
-          Welcome, {userName || "Guest"} to AGNI Smart Shopping Mart
+          Welcome, {userName} to AGNI Smart Shopping Mart
         </h1>
 
         {/* Subheading */}
