@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../store/authstore";
@@ -43,24 +43,27 @@ const EmailVerificationPage = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const verificationCode = code.join("");
-    try {
-      await verifyEmail(verificationCode);
-      navigate("/");
-      toast.success("Email verified successfully");
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const verificationCode = code.join("");
+      try {
+        await verifyEmail(verificationCode);
+        navigate("/");
+        toast.success("Email verified successfully");
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [code, navigate, verifyEmail]
+  );
 
   // Auto submit when all fields are filled
   useEffect(() => {
     if (code.every((digit) => digit !== "")) {
       handleSubmit(new Event("submit"));
     }
-  }, [code]);
+  }, [code, handleSubmit]);
 
   return (
     <div className="max-w-md w-full bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden">

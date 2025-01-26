@@ -11,20 +11,41 @@ const SignUpPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
 
+  const navigate = useNavigate();
   const { signup, error, isLoading } = useAuthStore();
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    if (confirmPassword) {
+      setPasswordMismatch(value !== confirmPassword);
+    }
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    const value = e.target.value;
+    setConfirmPassword(value);
+    setPasswordMismatch(password !== value);
+  };
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+
+    if (passwordMismatch) {
+      return;
+    }
 
     try {
       await signup(email, password, name);
       navigate("/verify-email");
     } catch (error) {
-      console.log(error);
+      console.error("Signup failed:", error);
     }
   };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -58,8 +79,18 @@ const SignUpPage = () => {
             type="password"
             placeholder="Password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handlePasswordChange}
           />
+          <Input
+            icon={Lock}
+            type="password"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
+          />
+          {passwordMismatch && (
+            <p className="text-red-500 text-sm mt-2">Passwords do not match!</p>
+          )}
           {error && <p className="text-red-500 font-semibold mt-2">{error}</p>}
           <PasswordStrengthMeter password={password} />
 
@@ -71,10 +102,10 @@ const SignUpPage = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || passwordMismatch}
           >
             {isLoading ? (
-              <Loader className=" animate-spin mx-auto" size={24} />
+              <Loader className="animate-spin mx-auto" size={24} />
             ) : (
               "Sign Up"
             )}
@@ -95,4 +126,5 @@ const SignUpPage = () => {
     </motion.div>
   );
 };
+
 export default SignUpPage;
