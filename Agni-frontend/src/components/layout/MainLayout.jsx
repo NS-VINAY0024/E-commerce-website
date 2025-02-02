@@ -3,6 +3,9 @@ import PropTypes from "prop-types"; // Import PropTypes
 import Header from "./Header";
 import Footer from "./Footer";
 
+Layout.propTypes = {
+  children: PropTypes.node.isRequired, 
+};
 const Layout = ({ children }) => {
   return (
     <div className="min-h-screen">
@@ -22,9 +25,5 @@ const Layout = ({ children }) => {
   );
 };
 
-// Prop Types validation
-Layout.propTypes = {
-  children: PropTypes.node.isRequired, // Ensures children is passed as a prop
-};
 
 export default Layout;
