@@ -22,7 +22,7 @@ const ProductCard = ({ product }) => {
         <img
           className="object-cover w-full"
           src={product.image}
-          alt="product image"
+          alt={product.name}
         />
         <div className="absolute inset-0 bg-black bg-opacity-20" />
       </div>

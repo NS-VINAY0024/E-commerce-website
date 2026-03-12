@@ -18,10 +18,17 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const __dirname = path.resolve();
+const allowedOrigins = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:8082",
+    "http://192.168.201.59:8082",
+    process.env.CLIENT_URL,
+].filter(Boolean);
 
 app.use(cors({
-    origin: ['http://localhost:8082', 'http://192.168.201.59:8082'], // Allow both local and network IPs
-    credentials: true, // If using cookies or sessions
+    origin: allowedOrigins,
+    credentials: true,
 }));
 app.use(express.json());
 app.use(cookieParser());
@@ -34,10 +41,12 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/rfid", rfidRoutes);
 
 if (process.env.NODE_ENV === "production") {
-    app.use(express.static(path.join(__dirname, "/frontend/dist")));
+    const frontendBuildPath = path.join(__dirname, "..", "Agni-frontend", "build");
+
+    app.use(express.static(frontendBuildPath));
 
     app.get("*", (req, res) => {
-        res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+        res.sendFile(path.join(frontendBuildPath, "index.html"));
     });
 }
 

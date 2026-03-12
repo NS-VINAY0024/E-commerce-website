@@ -28,7 +28,7 @@ const CreateProductForm = () => {
         image: "",
       });
     } catch {
-      console.log("error creating a product");
+      // Store state already exposes the failure to the UI.
     }
   };
 

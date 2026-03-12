@@ -1,13 +1,17 @@
 import axios from "axios";
 
+const baseURL =
+	process.env.REACT_APP_API_URL?.replace(/\/$/, "") ||
+	(process.env.NODE_ENV === "development" ? "/api" : "/api");
+
 const axiosInstance = axios.create({
-	baseURL: import.meta.mode === "development" ? "http://localhost:3000/api" : "/api",
-	withCredentials: true, // send cookies to the server
+	baseURL,
+	withCredentials: true,
 });
 
 axiosInstance.interceptors.response.use(
 	(res) => res,
-	(error) => Promise.reject((error.response && error.response.data) || 'Something went wrong')
+	(error) => Promise.reject(error)
 );
 
 export default axiosInstance;

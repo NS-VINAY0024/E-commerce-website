@@ -2,23 +2,29 @@ import { ArrowRight, CheckCircle, HandHeart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Confetti from "react-confetti";
+import toast from "react-hot-toast";
 import { useCartStore } from "../Store/useCartStore";
 import axios from "../lib/axios";
 
 const PurchaseSuccessPage = () => {
   const [isProcessing, setIsProcessing] = useState(true);
+  const [orderId, setOrderId] = useState("");
   const { clearCart } = useCartStore();
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const handleCheckoutSuccess = async (sessionId) => {
       try {
-        await axios.post("/payments/checkout-success", {
+        const response = await axios.post("/payments/checkout-success", {
           sessionId,
         });
+        setOrderId(response.data?.orderId || "");
         clearCart();
       } catch (error) {
-        console.log(error);
+        setError(
+          error.response?.data?.message || "Unable to confirm your payment."
+        );
+        toast.error("Unable to confirm your payment.");
       } finally {
         setIsProcessing(false);
       }
@@ -69,7 +75,7 @@ const PurchaseSuccessPage = () => {
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-400">Order number</span>
               <span className="text-sm font-semibold text-emerald-400">
-                #12345
+                {orderId ? `#${orderId.slice(-6).toUpperCase()}` : "Pending"}
               </span>
             </div>
             <div className="flex items-center justify-between">

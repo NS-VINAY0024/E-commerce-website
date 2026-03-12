@@ -50,17 +50,6 @@ const cartSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-// Ensure that cart items are correctly added or updated before saving
-cartSchema.pre("save", function (next) {
-    this.items.forEach(item => {
-        // Ensure price is always a number (in case of validation issues from frontend)
-        if (typeof item.price !== "number") {
-            item.price = parseFloat(item.price);
-        }
-    });
-    next();
-});
-
 const Cart = mongoose.model("Cart", cartSchema);
 
 export default Cart;

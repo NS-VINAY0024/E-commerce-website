@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import MainContent from "../../components/layout/MainContent";
-import CategorySection from "../../components/layout/components/categories";
 import useAuthStore from "../../Store/authstore";
 import HomePage from "../HomePage";
+
 const Home = () => {
   const { user, isAuthenticated, checkAuth } = useAuthStore();
+
   useEffect(() => {
     if (!user && isAuthenticated) {
-      checkAuth(); // Ensure we have the latest user data
+      checkAuth();
     }
   }, [user, isAuthenticated, checkAuth]);
 
   return (
     <div>
-      <MainContent userName={user.name} />
+      <MainContent userName={user?.name || "Shopper"} />
       <HomePage />
     </div>
   );

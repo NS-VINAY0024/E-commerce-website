@@ -13,7 +13,11 @@ const LoginPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    await login(email, password);
+    try {
+      await login(email, password);
+    } catch (error) {
+      // Store state already carries the error message for the form.
+    }
   };
 
   return (

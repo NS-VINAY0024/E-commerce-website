@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ShoppingCart,
   UserPlus,
@@ -18,41 +18,47 @@ const Header = () => {
   const { user, logout } = useAuthStore();
   const isAdmin = user?.role === "admin";
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { cart } = useCartStore();
+  const { cart, getCartItems } = useCartStore();
 
   // Toggle sidebar menu
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  useEffect(() => {
+    if (user) {
+      getCartItems();
+    }
+  }, [getCartItems, user]);
+
   return (
     <>
       <header className="grid grid-cols-[2fr_1fr] items-center bg-gradient-to-br from-[#6a11cb] to-[#2575fc] p-3 sm:p-4 md:p-5 shadow-md">
         <div className="left-section flex items-center">
-          <a href="/" className="mr-5">
+          <Link to="/" className="mr-5">
             <img
               src="/agni logo.png"
               alt="Smart Shopping Logo"
               className="max-w-[40px] sm:max-w-[50px] md:max-w-[60px]"
             />
-          </a>
+          </Link>
           <nav>
             <ul className="flex list-none m-0 p-0">
               <li className="mr-5">
-                <a
-                  href="/"
+                <Link
+                  to="/"
                   className="no-underline text-[#F3F4F6] text-[14px] sm:text-[18px] font-bold hover:text-[#2575fc]"
                 >
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/map"
+                <Link
+                  to="/map"
                   className="no-underline text-[#F3F4F6] text-[14px] sm:text-[18px] font-bold hover:text-[#2575fc]"
                 >
                   Map
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>
@@ -121,13 +127,13 @@ const Header = () => {
           >
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <a href="/">
+                <Link to="/">
                   <img
                     src={`${process.env.PUBLIC_URL}/image/agni logo.png`}
                     alt="Smart Shopping Logo"
                     className="w-20"
                   />
-                </a>
+                </Link>
                 <button onClick={toggleSidebar} className="text-gray-600">
                   <X size={24} />
                 </button>
@@ -136,28 +142,33 @@ const Header = () => {
               <nav className="space-y-4">
                 {user ? (
                   <>
-                    <a
-                      href="/profile"
+                    <Link
+                      to="/profile"
+                      onClick={toggleSidebar}
                       className="flex items-center space-x-3 text-gray-700 hover:bg-gray-100 p-2 rounded-md transition-colors"
                     >
                       <User size={20} />
                       <span>Profile</span>
-                    </a>
+                    </Link>
 
-                    <a
-                      href="/settings"
+                    <Link
+                      to="/settings"
+                      onClick={toggleSidebar}
                       className="flex items-center space-x-3 text-gray-700 hover:bg-gray-100 p-2 rounded-md transition-colors"
                     >
                       <Settings size={20} />
                       <span>Settings</span>
-                    </a>
+                    </Link>
                   </>
                 ) : null}
                 {user ? (
                   <button
                     className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 
 						rounded-md flex items-center transition duration-300 ease-in-out"
-                    onClick={logout}
+                    onClick={async () => {
+                      await logout();
+                      toggleSidebar();
+                    }}
                   >
                     <LogOut size={18} />
                     <span className="hidden sm:inline ml-2">Log Out</span>
@@ -166,6 +177,7 @@ const Header = () => {
                   <>
                     <Link
                       to={"/signup"}
+                      onClick={toggleSidebar}
                       className="bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-4 
 									rounded-md flex items-center transition duration-300 ease-in-out"
                     >
@@ -174,6 +186,7 @@ const Header = () => {
                     </Link>
                     <Link
                       to={"/login"}
+                      onClick={toggleSidebar}
                       className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 
 									rounded-md flex items-center transition duration-300 ease-in-out"
                     >

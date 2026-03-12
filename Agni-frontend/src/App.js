@@ -33,6 +33,13 @@ import CartPage from "./pages/CartPage";
 import PurchaseSuccessPage from "./pages/PurchaseSuccessPage";
 import PurchaseCancelPage from "./pages/PurchaseCancelPage";
 
+const AUTH_PATHS = new Set([
+  "/login",
+  "/signup",
+  "/forgot-password",
+  "/verify-email",
+]);
+
 // protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -41,7 +48,7 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (!user.isVerified) {
+  if (!user?.isVerified) {
     return <Navigate to="/verify-email" replace />;
   }
 
@@ -51,7 +58,7 @@ const ProtectedRoute = ({ children }) => {
 const RedirectAuthenticatedUser = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
 
-  if (isAuthenticated && user.isVerified) {
+  if (isAuthenticated && user?.isVerified) {
     return <Navigate to="/" replace />;
   }
 
@@ -60,7 +67,7 @@ const RedirectAuthenticatedUser = ({ children }) => {
 
 const IsAdmin = ({ children }) => {
   const { user } = useAuthStore();
-  if (user.role !== "admin") {
+  if (!user || user.role !== "admin") {
     return <Navigate to="/" replace />;
   }
   return children;
@@ -68,19 +75,10 @@ const IsAdmin = ({ children }) => {
 
 const App = () => {
   const { isCheckingAuth, checkAuth } = useAuthStore();
-  const location = useLocation(); // Get the current location();
-
-  const useAuthPageCheck = () => {
-    const location = useLocation();
-    return (
-      location.pathname === '/login' ||
-      location.pathname === '/signup' ||
-      location.pathname === '/forgot-password' ||
-      location.pathname === '/reset-password' ||
-      location.pathname === '/verify-email'
-    );
-  };
-  const isAuthPage = useAuthPageCheck();
+  const location = useLocation();
+  const isAuthPage =
+    AUTH_PATHS.has(location.pathname) ||
+    location.pathname.startsWith("/reset-password/");
 
 
 
@@ -92,11 +90,14 @@ const App = () => {
 
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Render Header and Footer only if not on auth pages and not on NotFound page */}
-      <Header />
+    <div className="min-h-screen flex flex-col bg-slate-950">
+      {!isAuthPage && <Header />}
 
-      <main className="min-h-screen bg-gradient-to-br from-[#6a11cb] to-[#2575fc] flex items-center justify-center relative overflow-hidden"
+      <main className={`relative flex-1 overflow-hidden ${
+        isAuthPage
+          ? "min-h-screen bg-gradient-to-br from-[#6a11cb] to-[#2575fc] flex items-center justify-center"
+          : ""
+      }`}
       >
         {isAuthPage && (
           <>
@@ -215,16 +216,10 @@ const App = () => {
           <Route
             path="/secret-dashboard"
             element={
-              <IsAdmin>
-                <AdminPage />
-              </IsAdmin>
-            }
-          />
-          <Route
-            path="/"
-            element={
               <ProtectedRoute>
-                <Home />
+                <IsAdmin>
+                  <AdminPage />
+                </IsAdmin>
               </ProtectedRoute>
             }
           />
@@ -267,7 +262,7 @@ const App = () => {
         <Toaster />
       </main>
 
-      {/* Render Footer only if not on auth pages and not on NotFound page */}
+      {!isAuthPage && <Footer />}
     </div>
 
   );

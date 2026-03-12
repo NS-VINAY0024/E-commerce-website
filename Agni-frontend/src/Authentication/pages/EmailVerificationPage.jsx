@@ -61,7 +61,7 @@ const EmailVerificationPage = () => {
   // Auto submit when all fields are filled
   useEffect(() => {
     if (code.every((digit) => digit !== "")) {
-      handleSubmit(new Event("submit"));
+      handleSubmit({ preventDefault: () => {} });
     }
   }, [code, handleSubmit]);
 

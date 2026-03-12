@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 
 export const useCartStore = create((set, get) => ({
     cart: [],
+    rfidItems: [],
     coupon: null,
     total: 0,
     subtotal: 0,
@@ -36,15 +37,18 @@ export const useCartStore = create((set, get) => ({
     getCartItems: async () => {
         try {
             const res = await axios.get("/cart");
-            set({ cart: res.data });
+            set({
+                cart: res.data.cartItems || [],
+                rfidItems: res.data.rfidItems || [],
+            });
             get().calculateTotals();
         } catch (error) {
-            set({ cart: [] });
-            toast.error(error.response.data.message || "An error occurred");
+            set({ cart: [], rfidItems: [] });
+            toast.error(error.response?.data?.message || "An error occurred");
         }
     },
     clearCart: async () => {
-        set({ cart: [], coupon: null, total: 0, subtotal: 0 });
+        set({ cart: [], rfidItems: [], coupon: null, total: 0, subtotal: 0, isCouponApplied: false });
     },
     addToCart: async (product) => {
         try {
@@ -62,13 +66,17 @@ export const useCartStore = create((set, get) => ({
             });
             get().calculateTotals();
         } catch (error) {
-            toast.error(error.response.data.message || "An error occurred");
+            toast.error(error.response?.data?.message || "An error occurred");
         }
     },
     removeFromCart: async (productId) => {
-        await axios.delete(`/cart`, { data: { productId } });
-        set((prevState) => ({ cart: prevState.cart.filter((item) => item._id !== productId) }));
-        get().calculateTotals();
+        try {
+            await axios.delete(`/cart`, { data: { productId } });
+            set((prevState) => ({ cart: prevState.cart.filter((item) => item._id !== productId) }));
+            get().calculateTotals();
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to remove item");
+        }
     },
     updateQuantity: async (productId, quantity) => {
         if (quantity === 0) {
@@ -76,15 +84,20 @@ export const useCartStore = create((set, get) => ({
             return;
         }
 
-        await axios.put(`/cart/${productId}`, { quantity });
-        set((prevState) => ({
-            cart: prevState.cart.map((item) => (item._id === productId ? { ...item, quantity } : item)),
-        }));
-        get().calculateTotals();
+        try {
+            await axios.put(`/cart/${productId}`, { quantity });
+            set((prevState) => ({
+                cart: prevState.cart.map((item) => (item._id === productId ? { ...item, quantity } : item)),
+            }));
+            get().calculateTotals();
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to update quantity");
+        }
     },
     calculateTotals: () => {
-        const { cart, coupon } = get();
-        const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const { cart, rfidItems, coupon } = get();
+        const items = [...cart, ...rfidItems];
+        const subtotal = items.reduce((sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0);
         let total = subtotal;
 
         if (coupon) {

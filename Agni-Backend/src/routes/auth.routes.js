@@ -24,6 +24,6 @@ router.post("/verify-email", verifyEmail);
 router.post("/forgot-password", forgotPassword);
 
 router.post("/reset-password/:token", resetPassword);
-router.post("/profile", protectRoute, getUserProfile);
+router.get("/profile/:id", protectRoute, getUserProfile);
 
 export default router;

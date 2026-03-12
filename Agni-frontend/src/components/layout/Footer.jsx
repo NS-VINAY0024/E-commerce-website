@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear(); // Dynamically get the current year
@@ -53,18 +54,18 @@ const Footer = () => {
       </div>
 
       <div className="flex flex-col items-end mr-[10px]">
-        <a
-          href="/about" // Update with actual link
+        <Link
+          to="/about"
           className="text-white no-underline my-[5px] text-[14px] sm:text-[16px] md:text-[18px] font-bold hover:text-[#6a11cb]"
         >
           About Us
-        </a>
-        <a
-          href="/contact" // Update with actual link
+        </Link>
+        <Link
+          to="/contact"
           className="text-white no-underline my-[5px] text-[14px] sm:text-[16px] md:text-[18px] font-bold hover:text-[#6a11cb]"
         >
           Contact Us
-        </a>
+        </Link>
       </div>
 
       <p className="copyright col-span-full text-center text-[#d3d3d3] text-sm sm:text-base">

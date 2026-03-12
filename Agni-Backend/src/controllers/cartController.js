@@ -2,7 +2,7 @@ import Cart from '../models/cart.model.js';
 // Add item to the cart (RFID-based or frontend request)
 export const addItemFromRFID = async (req, res) => {
     const { uid, name, price } = req.body;
-    const userId = req.user?.id; // Ensure this is correctly extracted
+    const userId = req.user?._id;
     try {
         if (!uid || !name || !price) {
             return res.status(400).json({ success: false, message: "Invalid data provided." });
@@ -70,19 +70,24 @@ export const addToCart = async (req, res) => {
 export const getCartProducts = async (req, res) => {
     try {
         const cart = await Cart.findOne({ user: req.user._id })
-            .populate("items.product") // Populate normal products
-            .lean(); // Convert Mongoose object to plain JSON
+            .populate("items.product")
+            .lean();
 
         if (!cart) {
-            return res.status(404).json({ message: "Cart not found" });
+            return res.json({
+                cartItems: [],
+                rfidItems: [],
+            });
         }
 
         res.json({
-            cartItems: cart.items.map((item) => ({
+            cartItems: (cart.items || [])
+                .filter((item) => item.product)
+                .map((item) => ({
                 ...item.product,
                 quantity: item.quantity,
             })),
-            rfidItems: cart.rfidItems, // Directly return RFID items
+            rfidItems: cart.rfidItems || [],
         });
     } catch (error) {
         console.log("Error in getCartProducts controller", error.message);
@@ -119,8 +124,12 @@ export const removeAllFromCart = async (req, res) => {
 export const updateQuantity = async (req, res) => {
     try {
         const { id: productId } = req.params;
-        const { quantity } = req.body;
+        const quantity = Number(req.body.quantity);
         const userId = req.user._id;
+
+        if (!Number.isInteger(quantity) || quantity < 0) {
+            return res.status(400).json({ message: "Quantity must be a non-negative integer" });
+        }
 
         const cart = await Cart.findOne({ user: userId });
 
