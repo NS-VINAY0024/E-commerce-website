@@ -1,15 +1,9 @@
-const Cart = require("../models/Cart"); // Import the Cart model
-
+import Cart from '../models/cart.model.js';
 // Add item to the cart (RFID-based or frontend request)
-exports.addItemFromRFID = async (req, res) => {
-    const { uid, name, price } = req.body; // Data from RFID scanner
-    const userId = req.user?.id; // User ID from the token (check if it's set)
-
-    // Log to check if userId is correctly set
-    console.log("Authenticated userId:", userId);
-
+export const addItemFromRFID = async (req, res) => {
+    const { uid, name, price } = req.body;
+    const userId = req.user?.id; // Ensure this is correctly extracted
     try {
-        // Ensure all required fields are provided
         if (!uid || !name || !price) {
             return res.status(400).json({ success: false, message: "Invalid data provided." });
         }
@@ -19,80 +13,137 @@ exports.addItemFromRFID = async (req, res) => {
         }
 
         // Find or create a cart for the user
-        let cart = await Cart.findOne({ userId });
+        let cart = await Cart.findOne({ user: userId });
+
         if (!cart) {
-            cart = new Cart({ userId, items: [] });
+            cart = new Cart({ user: userId, items: [], rfidItems: [] });
         }
 
-        // Check if the item already exists in the cart
-        const itemIndex = cart.items.findIndex((item) => item.productId === uid);
+        // Check if the RFID item exists
+        const itemIndex = cart.rfidItems.findIndex((item) => item.productId === uid);
 
         if (itemIndex > -1) {
-            // If the item exists, increment the quantity
-            cart.items[itemIndex].quantity += 1;
+            cart.rfidItems[itemIndex].quantity += 1; // Increase quantity if item exists
         } else {
-            // Add new item to the cart
-            cart.items.push({ productId: uid, name, price, quantity: 1 });
+            cart.rfidItems.push({ productId: uid, name, price, quantity: 1 });
         }
 
-        // Save the updated cart
+        // Save updated cart
         await cart.save();
 
-        return res.status(200).json({ success: true, message: "Item added to cart successfully.", cart });
+        return res.status(200).json({ success: true, message: "RFID item added to cart successfully.", cart });
     } catch (error) {
-        console.error("Error adding item to cart:", error);
-        return res.status(500).json({ success: false, message: "Failed to add item to the cart.", error });
+        console.error("Error adding RFID item to cart:", error);
+        return res.status(500).json({ success: false, message: "Failed to add item to cart.", error });
     }
 };
 
+
+export const addToCart = async (req, res) => {
+    try {
+        const { productId } = req.body;
+        const userId = req.user._id;
+
+        let cart = await Cart.findOne({ user: userId });
+
+        if (!cart) {
+            cart = new Cart({ user: userId, items: [] });
+        }
+
+        const existingItem = cart.items.find((item) => item.product.toString() === productId);
+
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.items.push({ product: productId, quantity: 1 });
+        }
+
+        await cart.save();
+        res.json(cart.items);
+    } catch (error) {
+        console.log("Error in addToCart controller", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
 
 // Fetch the cart for the logged-in user
-exports.getCart = async (req, res) => {
-    const userId = req.user.id; // Assume user is authenticated via a token
-
+export const getCartProducts = async (req, res) => {
     try {
-        // Fetch the user's cart
-        const cart = await Cart.findOne({ userId });
+        const cart = await Cart.findOne({ user: req.user._id })
+            .populate("items.product") // Populate normal products
+            .lean(); // Convert Mongoose object to plain JSON
 
-        if (!cart || cart.items.length === 0) {
-            return res.status(404).json({ success: false, message: "Cart is empty or not found." });
+        if (!cart) {
+            return res.status(404).json({ message: "Cart not found" });
         }
 
-        return res.status(200).json({ success: true, cart });
+        res.json({
+            cartItems: cart.items.map((item) => ({
+                ...item.product,
+                quantity: item.quantity,
+            })),
+            rfidItems: cart.rfidItems, // Directly return RFID items
+        });
     } catch (error) {
-        console.error("Error fetching cart:", error);
-        return res.status(500).json({ success: false, message: "Failed to fetch cart.", error });
+        console.log("Error in getCartProducts controller", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 };
 
+
 // Remove item from the cart
-exports.removeItem = async (req, res) => {
-    const userId = req.user.id; // Assume user is authenticated via a token
-    const { productId } = req.params; // Item ID to be removed
-
+export const removeAllFromCart = async (req, res) => {
     try {
-        // Fetch the user's cart
-        const cart = await Cart.findOne({ userId });
+        const { productId } = req.body;
+        const userId = req.user._id;
 
-        if (!cart || cart.items.length === 0) {
-            return res.status(404).json({ success: false, message: "Cart is empty or not found." });
+        const cart = await Cart.findOne({ user: userId });
+
+        if (!cart) {
+            return res.status(404).json({ message: "Cart not found" });
         }
 
-        // Filter out the item to be removed
-        const updatedItems = cart.items.filter((item) => item.productId !== productId);
-
-        if (updatedItems.length === cart.items.length) {
-            return res.status(404).json({ success: false, message: "Item not found in the cart." });
+        if (!productId) {
+            cart.items = [];
+        } else {
+            cart.items = cart.items.filter((item) => item.product.toString() !== productId);
         }
 
-        cart.items = updatedItems;
-
-        // Save the updated cart
         await cart.save();
-
-        return res.status(200).json({ success: true, message: "Item removed successfully.", cart });
+        res.json(cart.items);
     } catch (error) {
-        console.error("Error removing item from cart:", error);
-        return res.status(500).json({ success: false, message: "Failed to remove item from the cart.", error });
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+export const updateQuantity = async (req, res) => {
+    try {
+        const { id: productId } = req.params;
+        const { quantity } = req.body;
+        const userId = req.user._id;
+
+        const cart = await Cart.findOne({ user: userId });
+
+        if (!cart) {
+            return res.status(404).json({ message: "Cart not found" });
+        }
+
+        const existingItem = cart.items.find((item) => item.product.toString() === productId);
+
+        if (existingItem) {
+            if (quantity === 0) {
+                cart.items = cart.items.filter((item) => item.product.toString() !== productId);
+            } else {
+                existingItem.quantity = quantity;
+            }
+
+            await cart.save();
+            res.json(cart.items);
+        } else {
+            res.status(404).json({ message: "Product not found in cart" });
+        }
+    } catch (error) {
+        console.log("Error in updateQuantity controller", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 };

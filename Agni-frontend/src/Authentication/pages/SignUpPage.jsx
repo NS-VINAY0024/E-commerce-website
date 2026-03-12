@@ -5,7 +5,7 @@ import { Loader, Lock, Mail, User } from "lucide-react";
 
 import Input from "../components/input";
 import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
-import { useAuthStore } from "../store/authstore";
+import useAuthStore from "../../Store/authstore";
 
 const SignUpPage = () => {
   const [name, setName] = useState("");

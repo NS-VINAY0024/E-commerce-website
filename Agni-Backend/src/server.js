@@ -4,22 +4,34 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
 
-import { connectDB } from "./DataBase/connectDB.js";
+import { connectDB } from "./lib/connectDB.js";
 
 import authRoutes from "./routes/auth.routes.js";
+import productsRoutes from "./routes/product.routes.js";
+import cartRoutes from "./routes/cart.routes.js";
+import couponRoutes from "./routes/coupon.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
+import rfidRoutes from "./routes/rfid.routes.js";
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 const __dirname = path.resolve();
 
-app.use(cors({ origin: "http://localhost:8082", credentials: true }));
-
-app.use(express.json()); // allows us to parse incoming requests:req.body
-app.use(cookieParser()); // allows us to parse incoming cookies
+app.use(cors({
+    origin: ['http://localhost:8082', 'http://192.168.201.59:8082'], // Allow both local and network IPs
+    credentials: true, // If using cookies or sessions
+}));
+app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/product", productsRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/coupons", couponRoutes);
+app.use("/api/payments", paymentRoutes);
+app.use("/api/rfid", rfidRoutes);
 
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "/frontend/dist")));

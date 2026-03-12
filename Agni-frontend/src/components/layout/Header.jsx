@@ -1,58 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { Menu, X, Home, Settings, User, LogIn } from "lucide-react";
-import { useAuthStore } from "../../Authentication/store/authstore";
-
-const CartIcon = ({ className }) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className={className}
-  >
-    <path
-      d="M4 4h2l2.5 12h10l2.5-8H8"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <circle cx="10" cy="20" r="1" fill="currentColor" />
-    <circle cx="18" cy="20" r="1" fill="currentColor" />
-  </svg>
-);
+import {
+  ShoppingCart,
+  UserPlus,
+  LogIn,
+  LogOut,
+  Lock,
+  Menu,
+  X,
+  User,
+  Settings,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import useAuthStore from "../../Store/authstore";
+import { useCartStore } from "../../Store/useCartStore";
 
 const Header = () => {
   const { user, logout } = useAuthStore();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const isAuthenticated = useAuthStore();
+  const isAdmin = user?.role === "admin";
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [cartItems, setCartItems] = useState([]);
-
-  const handleLogout = () => {
-    logout(); // Call the Zustand store's logout method
-  };
+  const { cart } = useCartStore();
 
   // Toggle sidebar menu
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-
-  // Handle click outside of the sidebar to close it
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      const menu = document.getElementById("hamburgerMenu");
-      const dropdown = document.getElementById("dropdownMenu");
-
-      if (menu && dropdown && !menu.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
 
   return (
     <>
@@ -60,7 +31,7 @@ const Header = () => {
         <div className="left-section flex items-center">
           <a href="/" className="mr-5">
             <img
-              src={`${process.env.PUBLIC_URL}/image/agni logo.png`}
+              src="/agni logo.png"
               alt="Smart Shopping Logo"
               className="max-w-[40px] sm:max-w-[50px] md:max-w-[60px]"
             />
@@ -73,14 +44,6 @@ const Header = () => {
                   className="no-underline text-[#F3F4F6] text-[14px] sm:text-[18px] font-bold hover:text-[#2575fc]"
                 >
                   Home
-                </a>
-              </li>
-              <li className="mr-5">
-                <a
-                  href="*"
-                  className="no-underline text-[#F3F4F6] text-[14px] sm:text-[18px] font-bold hover:text-[#2575fc]"
-                >
-                  Items
                 </a>
               </li>
               <li>
@@ -97,22 +60,38 @@ const Header = () => {
 
         <div className="right-section flex justify-end items-center">
           <div className="cart relative mr-5">
-            <a
-              href="/cart"
-              className="relative inline-block"
-              aria-label="View Cart"
-            >
-              <div className="relative">
-                <CartIcon className="w-[18px] sm:w-[24px] text-white hover:text-[#6a11cb]" />
-                {cartItems.length > 0 && (
-                  <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-bold">
-                    {cartItems.length}
-                  </div>
+            {user && (
+              <Link
+                to={"/cart"}
+                className="relative group text-[#F3F4F6] hover:text-[#2575fc] transition duration-300 
+							ease-in-out"
+              >
+                <ShoppingCart
+                  className="inline-block mr-1 group-hover:text-[#2575fc]"
+                  size={20}
+                />
+                <span className="hidden sm:inline">Cart</span>
+                {cart.length > 0 && (
+                  <span
+                    className="absolute -top-2 -left-2 bg-[#6a11cb] text-[#F3F4F6] rounded-full px-2 py-0.5 
+									text-xs group-hover:bg-[#9a11cb] transition duration-300 ease-in-out"
+                  >
+                    {cart.length}
+                  </span>
                 )}
-              </div>
-            </a>
+              </Link>
+            )}
           </div>
-
+          {isAdmin && (
+            <Link
+              className="bg-[#6a11cb] hover:bg-[#9a11cb] text-white px-3 py-1 rounded-md font-medium
+								 transition duration-300 ease-in-out flex items-center"
+              to={"/secret-dashboard"}
+            >
+              <Lock className="inline-block mr-1" size={18} />
+              <span className="hidden sm:inline">Dashboard</span>
+            </Link>
+          )}
           <button
             onClick={toggleSidebar}
             className="text-white ml-4 hover:text-[#6a11cb]"
@@ -155,34 +134,54 @@ const Header = () => {
               </div>
 
               <nav className="space-y-4">
-                <a
-                  href="/profile"
-                  className="flex items-center space-x-3 text-gray-700 hover:bg-gray-100 p-2 rounded-md transition-colors"
-                >
-                  <User size={20} />
-                  <span>Profile</span>
-                </a>
+                {user ? (
+                  <>
+                    <a
+                      href="/profile"
+                      className="flex items-center space-x-3 text-gray-700 hover:bg-gray-100 p-2 rounded-md transition-colors"
+                    >
+                      <User size={20} />
+                      <span>Profile</span>
+                    </a>
 
-                <a
-                  href="/settings"
-                  className="flex items-center space-x-3 text-gray-700 hover:bg-gray-100 p-2 rounded-md transition-colors"
-                >
-                  <Settings size={20} />
-                  <span>Settings</span>
-                </a>
-                <a
-                  href={isAuthenticated ? "/logout" : "/login"}
-                  onClick={(e) => {
-                    if (isAuthenticated) {
-                      e.preventDefault(); // Prevent navigation to "/logout"
-                      handleLogout(); // Call the logout function
-                    }
-                  }}
-                  className="flex items-center space-x-3 text-gray-700 hover:bg-gray-100 p-2 rounded-md transition-colors"
-                >
-                  <LogIn size={20} />
-                  <span>{isAuthenticated ? "Logout" : "Login"}</span>
-                </a>
+                    <a
+                      href="/settings"
+                      className="flex items-center space-x-3 text-gray-700 hover:bg-gray-100 p-2 rounded-md transition-colors"
+                    >
+                      <Settings size={20} />
+                      <span>Settings</span>
+                    </a>
+                  </>
+                ) : null}
+                {user ? (
+                  <button
+                    className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 
+						rounded-md flex items-center transition duration-300 ease-in-out"
+                    onClick={logout}
+                  >
+                    <LogOut size={18} />
+                    <span className="hidden sm:inline ml-2">Log Out</span>
+                  </button>
+                ) : (
+                  <>
+                    <Link
+                      to={"/signup"}
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-4 
+									rounded-md flex items-center transition duration-300 ease-in-out"
+                    >
+                      <UserPlus className="mr-2" size={18} />
+                      Sign Up
+                    </Link>
+                    <Link
+                      to={"/login"}
+                      className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 
+									rounded-md flex items-center transition duration-300 ease-in-out"
+                    >
+                      <LogIn className="mr-2" size={18} />
+                      Login
+                    </Link>
+                  </>
+                )}
               </nav>
             </div>
           </div>

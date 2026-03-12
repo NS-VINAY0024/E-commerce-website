@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Mail, Lock, Loader } from "lucide-react";
 import { Link } from "react-router-dom";
 import Input from "../components/input";
-import { useAuthStore } from "../store/authstore";
+import useAuthStore from "../../Store/authstore";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");

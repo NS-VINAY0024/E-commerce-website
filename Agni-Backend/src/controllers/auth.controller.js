@@ -8,8 +8,7 @@ import {
     sendVerificationEmail,
     sendWelcomeEmail,
 } from "../email/email.js";
-import { User } from "../models/user.model.js";
-
+import User from "../models/user.model.js"
 export const signup = async (req, res) => {
     const { email, password, name } = req.body;
 
@@ -195,5 +194,18 @@ export const checkAuth = async (req, res) => {
     } catch (error) {
         console.log("Error in checkAuth ", error);
         res.status(400).json({ success: false, message: error.message });
+    }
+};
+
+export const getUserProfile = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findById(userId).select("-password");
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server error", error: error.message });
     }
 };

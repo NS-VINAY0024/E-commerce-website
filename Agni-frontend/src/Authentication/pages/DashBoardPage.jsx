@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useAuthStore } from "../store/authstore";
+import useAuthStore from "../../Store/authstore";
 import { formatDate } from "../utils/date";
 
 const DashboardPage = () => {

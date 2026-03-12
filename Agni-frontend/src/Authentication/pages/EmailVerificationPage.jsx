@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useAuthStore } from "../store/authstore";
+import useAuthStore from "../../Store/authstore";
 import toast from "react-hot-toast";
 
 const EmailVerificationPage = () => {

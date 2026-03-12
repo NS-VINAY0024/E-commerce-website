@@ -4,16 +4,11 @@ import Header from "./Header";
 import Footer from "./Footer";
 
 Layout.propTypes = {
-  children: PropTypes.node.isRequired, 
+  children: PropTypes.node.isRequired,
 };
 const Layout = ({ children }) => {
   return (
     <div className="min-h-screen">
-      {" "}
-      {/* Added background color */}
-      <header>
-        <Header />
-      </header>
       <main className="flex-grow container mx-auto max-w-full">
         {/* Added max width for better control */}
         {children}
@@ -24,6 +19,5 @@ const Layout = ({ children }) => {
     </div>
   );
 };
-
 
 export default Layout;
